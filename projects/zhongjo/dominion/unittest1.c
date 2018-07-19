@@ -35,9 +35,9 @@
 #define TESTCARD "village"
 
 int main() {
+
     // set up gamestate such that a player can buy
-        
-    int i;
+    int i, buyCardResult;
     int seed = 1809;
     int numPlayers = 2; 
     int thisPlayer = 0; // players designated by number
@@ -52,7 +52,6 @@ int main() {
 	printf("----------------- Testing buyCard: %s ----------------\n", TESTCARD);
 
 	// ----------- TEST 1: player can buy --------------
-	// ----------- TEST 2: player can not buy --------------
 	printf("TEST 1: Player can buy cards\n");
 
 	// copy the game state to a test case
@@ -81,8 +80,9 @@ int main() {
     }
 
     // buyCard
-	// cardEffect(steward, choice1, choice2, choice3, &testG, handpos, &bonus);
-    buyCard(testCard, &testG);
+    buyCardResult = buyCard(testCard, &testG);
+    assert(buyCardResult == 0);
+	printf("buy attempt result = %d, expected = %d\n", buyCardResult, 0);
 
     // check that the card is in the discard pile
     // number of this card before + 1
@@ -106,6 +106,41 @@ int main() {
     // check that the number of available supply has decreased by 1
     assert(supplyCount(testCard, &testG) == initialSupply - 1);
 	printf("supply count = %d, expected = %d\n", supplyCount(testCard, &testG), initialSupply - 1);
+    
+    // failure tests
+    // too few coins
+	printf("TEST 2: Player can not buy cards, too few coins\n");
+
+    // copy gamestate
+	memcpy(&testG, &G, sizeof(struct gameState));
+
+    // decrease coins
+    // updateCoins(thisPlayer, &testG, -10);
+    testG.coins = 0;
+    // buyCard
+    buyCardResult = buyCard(testCard, &testG);
+    assert(buyCardResult == -1);
+	printf("buy attempt result = %d, expected = %d\n", buyCardResult, -1);
+
+
+	printf("TEST 3: Player can not buy cards, no buys remaining\n");
+    //copy gamestate
+	memcpy(&testG, &G, sizeof(struct gameState));
+    // set buys to 0, not allowing player to buy
+    testG.numBuys = 0;
+
+    buyCardResult = buyCard(testCard, &testG);
+    assert(buyCardResult == -1);
+	printf("buy attempt result = %d, expected = %d\n", buyCardResult, -1);
+
+	printf("TEST 4: Player can not buy cards, no supply remaining\n");
+    // testCard has no supply
+    testG.supplyCount[testCard] = 0;
+    
+    buyCardResult = buyCard(testCard, &testG);
+    assert(buyCardResult == -1);
+	printf("buy attempt result = %d, expected = %d\n", buyCardResult, -1);
+
 
 	printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", "buyCard");
 

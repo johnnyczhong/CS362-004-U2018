@@ -46,4 +46,4 @@ clean:
 	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
 
 cleantests:
-	rm -f tests.out unittest1 *.gcov
+	rm -f tests.out unittest1
