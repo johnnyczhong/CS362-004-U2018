@@ -18,7 +18,7 @@ int main() {
     int seed = 1809;
     int numPlayers = 2; 
     int initialDiscardTreasureCount = 0, finalDiscardTreasureCount = 0, playedAdventurerCount = 0;
-    int numAdventurer = 0, initialTreasureCount = 0, thisPlayer = 0; 
+    int initialTreasureCount = 0, thisPlayer = 0; 
 	struct gameState G, testG;
 	int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
 			sea_hag, tribute, smithy, council_room};
