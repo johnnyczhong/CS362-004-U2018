@@ -66,6 +66,11 @@ tests.out:
 	gcc -o cardtest3 -g  cardtest3.c dominion.o rngs.o $(CFLAGS)
 	./cardtest3 >> tests.out
 	gcov dominion.c >> tests.out
+	echo ""
+	echo "cardtest4.c:" >> tests.out
+	gcc -o cardtest4 -g  cardtest4.c dominion.o rngs.o $(CFLAGS)
+	./cardtest4 >> tests.out
+	gcov dominion.c >> tests.out
 
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
@@ -76,4 +81,4 @@ clean:
 	rm -f *.o playdom.exe playdom player player.exe  *.gcov *.gcda *.gcno *.so *.out testDrawCard testDrawCard.exe
 
 cleantests:
-	rm -f tests.out unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3
+	rm -f tests.out unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
