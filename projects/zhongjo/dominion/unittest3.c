@@ -1,28 +1,5 @@
 // unittest1.c
-// function to test: buyCard
-
-// what to test?
-// 1. success:
-//    a. places the card in the player's discard pile
-//    b. reduces the number of coins available to the player equal to the number of the cost of the card
-//    c. decreases the number of buys remaining by 1
-//    d. decreases the number of available cards of that type by 1
-// 2. failure:
-//    a. does not add a card to the player's hand or discard pile
-//    b. does not reduce the number of coins.
-//    c. 
-
-// agenda:
-// 1. set up game state
-// 2.
-
-/*
- * Include the following lines in your makefile:
- *
- * cardtest4: cardtest4.c dominion.o rngs.o
- *      gcc -o cardtest1 -g  cardtest4.c dominion.o rngs.o $(CFLAGS)
- */
-
+// function to test: whoseTurn
 
 #include "dominion.h"
 #include "dominion_helpers.h"
