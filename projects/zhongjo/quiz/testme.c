@@ -3,16 +3,29 @@
 #include<stdlib.h>
 #include<time.h>
 
+#define STRLIMIT 5
+
 char inputChar()
 {
-    // TODO: rewrite this function
-    return ' ';
+    // space to ~
+    char c = (rand() % 93) + ' ';
+    return c;
 }
 
 char *inputString()
 {
-    // TODO: rewrite this function
-    return "";
+    // size limit of 6 characters, which is what's necessary to pass state 9
+    // character limits between 'a' and 'z'
+    int i;
+    char* str = malloc(sizeof(char) * (STRLIMIT+1));
+    for (i = 0; i < STRLIMIT; i++)
+    {
+        str[i] = (rand() % 26) + 'a';
+    }
+    
+    str[STRLIMIT] = '\0';
+
+    return str;
 }
 
 void testme()
