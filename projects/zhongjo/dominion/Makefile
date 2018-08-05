@@ -21,33 +21,22 @@ testBuyCard: testDrawCard.c dominion.o rngs.o
 testAll: dominion.o testSuite.c
 	gcc -o testSuite testSuite.c -g  dominion.o rngs.o $(CFLAGS)
 
-randomtests: randomtestadventurer.c
+randomtests: randomtestadventurer.c randomtestcard1.c randomtestcard2.c
 	echo "Result for running random tests:" > randomtests.out
 	echo "randomtestadventurer.c:" >> randomtests.out
 	gcc -o randomtestadventurer -g  randomtestadventurer.c dominion.o interface.o rngs.o $(CFLAGS)
 	./randomtestadventurer >> randomtests.out
-	# ./randomtestadventurer
 	gcov dominion.c >> randomtests.out
 	echo ""
-
-randomtest1: randomtestcard1.c
-	# echo "Result for running random tests:" > randomtests.out
-	# echo "randomtestadventurer.c:" >> randomtests.out
+	echo "randomtestcard1.c:" >> randomtests.out
 	gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o interface.o rngs.o $(CFLAGS)
-	# ./randomtestadventurer >> randomtests.out
-	./randomtestcard1
-	# gcov dominion.c >> randomtests.out
-	gcov dominion.c
+	./randomtestadventurer >> randomtests.out
+	gcov dominion.c >> randomtests.out
 	echo ""
-
-randomtest2: randomtestcard2.c
-	# echo "Result for running random tests:" > randomtests.out
-	# echo "randomtestadventurer.c:" >> randomtests.out
+	echo "randomtestcard2.c:" >> randomtests.out
 	gcc -o randomtestcard2 -g  randomtestcard2.c dominion.o interface.o rngs.o $(CFLAGS)
-	# ./randomtestadventurer >> randomtests.out
-	./randomtestcard2
-	# gcov dominion.c >> randomtests.out
-	gcov dominion.c
+	./randomtestcard2 >> randomtests.out
+	gcov dominion.c >> randomtests.out
 	echo ""
 
 interface.o: interface.h interface.c

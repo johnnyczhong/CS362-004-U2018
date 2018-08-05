@@ -29,10 +29,6 @@ int checkAdventurer(int* k, struct gameState *gs, struct gameState *postGs)
     int thisPlayer = whoseTurn(gs);
     // char name[MAX_STRING_LENGTH];
 
-    printDeck(thisPlayer, gs);
-    printDiscard(thisPlayer, gs);
-    printPlayed(thisPlayer, gs);
-
     // check final conditions
 	printf("TEST 1: Player %d has same or 0 treasure cards in discard\n", whoseTurn(gs));
     initialCounter = 0, finalCounter = 0;
@@ -212,7 +208,6 @@ int main()
         
         // playAdventurer
         int result = playCard(randomHandPos, 0, 0, 0, &postGS);
-        printState(&gs);
 
         printf("Play Result: %d\n", result);
         checkAdventurer(k, &gs, &postGS);
