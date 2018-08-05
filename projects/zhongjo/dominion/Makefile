@@ -21,6 +21,15 @@ testBuyCard: testDrawCard.c dominion.o rngs.o
 testAll: dominion.o testSuite.c
 	gcc -o testSuite testSuite.c -g  dominion.o rngs.o $(CFLAGS)
 
+randomtests: randomtestadventurer.c
+	echo "Result for running random tests:" > randomtests.out
+	#echo "randomtestadventurer.c:" >> randomtests.out
+	gcc -o randomtestadventurer -g  randomtestadventurer.c dominion.o interface.o rngs.o $(CFLAGS)
+	# ./randomtestadventurer >> randomtests.out
+	./randomtestadventurer
+	#gcov dominion.c >> randomtests.out
+	echo ""
+
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
