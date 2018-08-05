@@ -30,6 +30,16 @@ randomtests: randomtestadventurer.c
 	gcov dominion.c >> randomtests.out
 	echo ""
 
+randomtest1: randomtestcard1.c
+	# echo "Result for running random tests:" > randomtests.out
+	# echo "randomtestadventurer.c:" >> randomtests.out
+	gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o interface.o rngs.o $(CFLAGS)
+	# ./randomtestadventurer >> randomtests.out
+	./randomtestcard1
+	# gcov dominion.c >> randomtests.out
+	gcov dominion.c
+	echo ""
+
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
