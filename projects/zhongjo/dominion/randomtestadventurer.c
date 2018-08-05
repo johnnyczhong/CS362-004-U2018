@@ -24,29 +24,14 @@
 int checkAdventurer(int* k, struct gameState *gs, struct gameState *postGs)
 {
 
-    /*
     int i;
     int initialCounter, finalCounter;
     int thisPlayer = whoseTurn(gs);
-    struct gameState postGs;
+    // char name[MAX_STRING_LENGTH];
 
-    // set gamestate such that card can be played
-    gs->phase = 0;
-    gs->numActions = 1;
-
-    // copy gamestate 
-	memcpy(gs, &postGs, sizeof(struct gameState));
-    // check initial conditions
-    
+    printDeck(thisPlayer, gs);
+    printDiscard(thisPlayer, gs);
     printPlayed(thisPlayer, gs);
-
-    // playAdventurer
-    playCard(0, 0, 0, 0, &postGs);
-    */
-
-    int i;
-    int initialCounter, finalCounter;
-    int thisPlayer = whoseTurn(gs);
 
     // check final conditions
 	printf("TEST 1: Player %d has same or 0 treasure cards in discard\n", whoseTurn(gs));
@@ -54,13 +39,24 @@ int checkAdventurer(int* k, struct gameState *gs, struct gameState *postGs)
     for (i = 0; i < gs->discardCount[thisPlayer]; i++)
     {
         if (gs->discard[thisPlayer][i] == copper || gs->discard[thisPlayer][i] == silver || gs->discard[thisPlayer][i] == gold)
+        {
             initialCounter++;
+            // cardNumToName(gs->discard[thisPlayer][i], name);
+            // printf("%-13s\n", name);
+        }
+        else
+        {
+            // cardNumToName(gs->discard[thisPlayer][i], name);
+            // printf("%-13s\n", name);
+        }
     }
 
     for (i = 0; i < postGs->discardCount[thisPlayer]; i++)
     {
         if (postGs->discard[thisPlayer][i] == copper || postGs->discard[thisPlayer][i] == silver || postGs->discard[thisPlayer][i] == gold)
+        {
             finalCounter++;
+        }
     }
 
     if (initialCounter == finalCounter || finalCounter == 0) { printf("Test Passed: "); }
@@ -85,24 +81,27 @@ int checkAdventurer(int* k, struct gameState *gs, struct gameState *postGs)
 
     // check that the number of actions is 0
 	printf("TEST 3: Player has no remaining actions\n");
-	printf("numActions count = %d, expected = %d\n", gs->numActions, 0);
-    assert(gs->numActions == 0);
+	printf("numActions count = %d, expected = %d\n", postGs->numActions, gs->numActions-1);
+    assert(postGs->numActions == gs->numActions-1);
 
 	printf("TEST 4: No state changes for other players\n");
     // ensure hand, deck, discard counts remain the same for all other players
-    for (i = 1; i < gs->numPlayers; i++)
+    for (i = 0; i < gs->numPlayers; i++)
     {
-        if (gs->deckCount[i] == postGs->deckCount[i]) { printf("Test Passed: "); }
-        else { printf("Test Failed: "); }
-        printf("deck count = %d, expected = %d\n", gs->deckCount[i], postGs->deckCount[i]);
-        
-        if (gs->handCount[i] == postGs->handCount[i]) { printf("Test Passed: "); }
-        else { printf("Test Failed: "); }
-        printf("hand count = %d, expected = %d\n", gs->handCount[i], postGs->handCount[i]);
-        
-        if (gs->discardCount[i] == postGs->discardCount[i]) { printf("Test Passed: "); }
-        else { printf("Test Failed: "); }
-        printf("discard count = %d, expected = %d\n", gs->discardCount[i], postGs->discardCount[i]);
+        if (i != whoseTurn(gs))
+        {
+            if (gs->deckCount[i] == postGs->deckCount[i]) { printf("Test Passed: "); }
+            else { printf("Test Failed: "); }
+            printf("deck count = %d, expected = %d\n", gs->deckCount[i], postGs->deckCount[i]);
+            
+            if (gs->handCount[i] == postGs->handCount[i]) { printf("Test Passed: "); }
+            else { printf("Test Failed: "); }
+            printf("hand count = %d, expected = %d\n", gs->handCount[i], postGs->handCount[i]);
+            
+            if (gs->discardCount[i] == postGs->discardCount[i]) { printf("Test Passed: "); }
+            else { printf("Test Failed: "); }
+            printf("discard count = %d, expected = %d\n", gs->discardCount[i], postGs->discardCount[i]);
+        }
     }
 
     printf("TEST 5: No changes to Kingdom Supply Card Piles\n");
@@ -200,7 +199,8 @@ struct gameState randomizeGameState(struct gameState *gs)
 
 int main() 
 {
-    int i, j, numPlayers;
+    int i, j, testCounter, numPlayers, seed;
+    int testCount = 20;
     srand(time(NULL));
     struct gameState gs, postGS;
     int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
@@ -209,10 +209,12 @@ int main()
     // set up game with random number of players between 2 and MAX
     //int numPlayers = (rand() % (MAX_PLAYERS - 2)) + 2;
 
-    for (i = 0; i < 20; i++)
+    for (testCounter = 0; testCounter < testCount; testCounter++)
     {
 
+        seed = floor(Random() * 20000);
         numPlayers = (rand() % (MAX_PLAYERS - 2)) + 2;
+        initializeGame(numPlayers, k, seed, &gs);
 
         gs.numPlayers = numPlayers;
 
@@ -220,8 +222,8 @@ int main()
         for (i = 0; i < numPlayers; i++)
         {
             // randomize size of decks
-            gs.deckCount[i] = floor(Random() * MAX_DECK);
-            // gs->deckCount[i] = floor(Random() * 20);
+            // gs.deckCount[i] = floor(Random() * MAX_DECK);
+            gs.deckCount[i] = floor(Random() * 20);
             // randomize cards in deck
             for (j = 0; j < gs.deckCount[i]; j++)
             {
@@ -255,22 +257,24 @@ int main()
         {
             gs.playedCards[i] = floor(rand() % 26);
         }
-        // printPlayed(whoseTurn(gs), gs);
 
-        // int thisPlayer = whoseTurn(&gs);
+        int thisPlayer = whoseTurn(&gs);
+        int randomHandPos = rand() % gs.handCount[thisPlayer];
+        gs.hand[whoseTurn(&gs)][randomHandPos] = adventurer;
 
         // set gamestate such that card can be played
+        /*
         gs.phase = 0;
         gs.numActions = 1;
-
+        */
         // copy gamestate 
-        memcpy(&gs, &postGS, sizeof(struct gameState));
+        memcpy(&postGS, &gs, sizeof(struct gameState));
         
-        // printPlayed(thisPlayer, gs);
-
         // playAdventurer
-        playCard(0, 0, 0, 0, &postGS);
-        
+        int result = playCard(randomHandPos, 0, 0, 0, &postGS);
+        printState(&gs);
+
+        printf("Play Result: %d\n", result);
         checkAdventurer(k, &gs, &postGS);
     }
 

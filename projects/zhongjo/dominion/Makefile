@@ -23,11 +23,11 @@ testAll: dominion.o testSuite.c
 
 randomtests: randomtestadventurer.c
 	echo "Result for running random tests:" > randomtests.out
-	#echo "randomtestadventurer.c:" >> randomtests.out
+	echo "randomtestadventurer.c:" >> randomtests.out
 	gcc -o randomtestadventurer -g  randomtestadventurer.c dominion.o interface.o rngs.o $(CFLAGS)
-	# ./randomtestadventurer >> randomtests.out
-	./randomtestadventurer
-	#gcov dominion.c >> randomtests.out
+	./randomtestadventurer >> randomtests.out
+	# ./randomtestadventurer
+	gcov dominion.c >> randomtests.out
 	echo ""
 
 interface.o: interface.h interface.c
