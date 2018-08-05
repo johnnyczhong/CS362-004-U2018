@@ -136,66 +136,6 @@ int checkAdventurer(int* k, struct gameState *gs, struct gameState *postGs)
     return 0;
 }
 
-/*
-// produce a valid random state
-struct gameState randomizeGameState(struct gameState *gs)
-{
-    // randomize number of players
-    int i, j;
-    int numPlayers = (rand() % (MAX_PLAYERS - 2)) + 2;
-
-    gs->numPlayers = numPlayers;
-
-    // for each player
-    for (i = 0; i < numPlayers; i++)
-    {
-        // randomize size of decks
-        gs->deckCount[i] = floor(Random() * MAX_DECK);
-        // gs->deckCount[i] = floor(Random() * 20);
-        // randomize cards in deck
-        for (j = 0; j < gs->deckCount[i]; j++)
-        {
-            gs->deck[i][j] = floor(Random() * 26);
-        }
-
-        // randomize size of discard pile
-        gs->discardCount[i] = floor(Random() * 20);
-        // randomize cards in discard
-        for (j = 0; j < gs->deckCount[i]; j++)
-        {
-            gs->discard[i][j] = floor(Random() * 26);
-        }
-
-        // randomize size of hand
-        gs->handCount[i] = floor(Random() * MAX_HAND);
-        // gs->handCount[i] = floor(Random() * 20);
-        // randomize cards in hand
-        for (j = 0; j < gs->handCount[i]; j++)
-        {
-            // gs->hand[i][j] = floor(Random() * 26);
-            gs->hand[i][j] = floor(rand() % 26);
-        }
-
-    }
-
-    gs->whoseTurn = rand() % numPlayers;
-    gs->playedCardCount = 20;
-    
-    for (i = 0; i < gs->playedCardCount; i++)
-    {
-        gs->playedCards[i] = floor(rand() % 26);
-    }
-    printPlayed(whoseTurn(gs), gs);
-
-    printState(gs);
-    
-    struct gameState resultGS;
-	memcpy(gs, &resultGS, sizeof(struct gameState));
-
-    return resultGS;
-
-}
-*/
 
 int main() 
 {
@@ -223,7 +163,7 @@ int main()
         {
             // randomize size of decks
             // gs.deckCount[i] = floor(Random() * MAX_DECK);
-            gs.deckCount[i] = floor(Random() * 20);
+            gs.deckCount[i] = floor(Random() * 20) + 1;
             // randomize cards in deck
             for (j = 0; j < gs.deckCount[i]; j++)
             {

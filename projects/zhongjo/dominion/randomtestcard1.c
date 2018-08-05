@@ -137,7 +137,7 @@ int main()
         {
             // randomize size of decks
             // gs.deckCount[i] = floor(Random() * MAX_DECK);
-            gs.deckCount[i] = floor(Random() * 20);
+            gs.deckCount[i] = floor(Random() * 20) + 1;
             // randomize cards in deck
             for (j = 0; j < gs.deckCount[i]; j++)
             {
