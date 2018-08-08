@@ -1,93 +1,129 @@
+// cardtest4.c
+// card to test: council room 
+
 #include "dominion.h"
 #include "dominion_helpers.h"
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
 #include "rngs.h"
+#include <stdlib.h>
 
-#define DEBUG 0
-#define NOISY_TEST 1
+#define TESTCARD "council room"
 
-
-int checkAdventurer(int player, struct gameState *post, int deckSize, int discardSize, int c) {
-    // printf("hi\n");
-    adventurerCard(post);
-    // printf("bye\n");
-    updateCoins(player,post,0);
-    
-    if((c = 0 && post->coins != 1) || (c = 1 && post->coins != 2) || (c = 2 && post->coins != 3) || (c = 3 && post->coins != 4)) {
-        printf("TEST FAILED          Player: %d, Case: %d, Expected Coins: %d, Actual Coins: %d, Deck Size: %d, Discard Size: %d\n",player, c, (c + 1), post->coins, deckSize, discardSize);
-        return -1;
-    } else {
-        printf("OK                   Player: %d, Case: %d, Expected Coins: %d, Actual Coins: %d, Deck Size: %d, Discard Size: %d\n",player, c, (c + 1), post->coins, deckSize, discardSize);
-        return 0;
-    }
-    
-}
-
-// Tests whether adventurer card function adds the requested card correctly.
 int main() {
-    // Setup and loop structure is based on provided examples
-    int p, c, deckCount, handCount, discardCount, testVal;
-    int k[10] = {adventurer, council_room, feast, gardens, mine,
-        remodel, smithy, village, baron, great_hall};
-    struct gameState G;
+
+    // set up gamestate such that a player can buy
+    int i, result;
+    int seed = 1809;
+    int numPlayers = 2; 
+    int thisPlayer = 0; 
+    int playedTestCardCount = 0;
+	struct gameState G, testG;
+	int k[10] = {adventurer, embargo, village, minion, mine, cutpurse,
+			sea_hag, tribute, smithy, council_room};
+    int testCard = council_room;
+
+	// initialize a game state and player cards
+	initializeGame(numPlayers, k, seed, &G);
+
+    // place the test card into the player's hand, position 0
+    G.hand[thisPlayer][0] = council_room;
+
+	// copy the game state to a test case
+	memcpy(&testG, &G, sizeof(struct gameState));
+
+	printf("----------------- Testing %s ----------------\n", TESTCARD);
+
+    // check initial conditions
+    assert(testG.handCount[thisPlayer] == 5);
+    assert(testG.numActions == 1);
+    assert(testG.deckCount[thisPlayer] == 5);
+    assert(testG.discardCount[thisPlayer] == 0);
+
+    // check final conditions 
+    // test 1: played successfully
+	printf("TEST 1: Player has played the card successfully\n");
+    result = playCard(0, 0, 0, 0, &testG);
+    if (result == 0) { printf("Test Passed: "); }
+    else { printf("Test Failed: "); }
+	printf("playCard result = %d, expected = %d\n", result, 0);
+
+    // test 2: deck decrease by 4
+	printf("TEST 2: Player deck has decreased by 4\n");
+    if (testG.deckCount[thisPlayer] == G.deckCount[thisPlayer] - 4) { printf("Test Passed: "); }
+    else { printf("Test Failed: "); }
+	printf("playCard result = %d, expected = %d\n", testG.deckCount[thisPlayer], G.deckCount[thisPlayer] - 1);
+
+    // test 3: hand has 8 cards
+	printf("TEST 3: Player has 8 cards in hand\n");
+    if (testG.handCount[thisPlayer] == 8) { printf("Test Passed: "); }
+    else { printf("Test Failed: "); }
+	printf("handCount result = %d, expected = %d\n", testG.handCount[thisPlayer], 5);
     
-    printf ("Testing adventurerCard.\n");
-    printf ("FIXED TESTS.\n");
-    
-    SelectStream(2);
-    PutSeed(3);
-    
-    // Test numCards drawn
-    //
-    
-    int testsOk = 1;
-    // External for loops are very similar to provided example
-    // Check for both players
-    for(p = 0; p < 2; p++) {
-        // Check when cards are present in deck
-        for(deckCount = 4; deckCount < 10; deckCount++) {
-            // Check for different hand sizes
-            for(handCount = 1; handCount < 10; handCount++) {
-                // Check for different hand positions
-                for(discardCount = 4; discardCount < 10; discardCount++) {
-                        // Setup code originally from testBuyCard.c
-                        memset(&G, 23, sizeof(struct gameState));
-                        initializeGame(2, k, 1, &G);
-                        G.deckCount[p] = deckCount;
-                        memset(G.deck[p], 0, sizeof(int) * deckCount);
-                        G.discardCount[p] = discardCount;
-                        memset(G.discard[p], 0, sizeof(int) * discardCount);
-                        G.handCount[p] = handCount;
-                        memset(G.hand[p], 0, sizeof(int) * handCount);
-                        G.whoseTurn = p;
-                        
-                        for(c = 0; c < 3; c++) {
-                            // Case 0: 1 Treasure total, from discard
-                            if(c == 0)
-                                memset(G.discard[p], copper, sizeof(int));
-                            // Case 1: Treasures all come from discard
-                            else if(c == 1) {
-                                memset(G.deck[p], copper, sizeof(int) * 2);
-                                // Case 2: 1 Treasure from each deck and discard
-                            } else if(c == 2) {
-                                memset(G.deck[p], copper, sizeof(int));
-                                memset(G.discard[p], silver, sizeof(int));
-                                // Case 3: Treasures all come from deck
-                            } else if(c == 3) {
-                                memset(G.deck[p], silver, sizeof(int) * 2);
-                                memset(G.discard[p], gold, sizeof(int) * discardCount);
-                            }
-                            testVal = checkAdventurer(p,&G, deckCount, discardCount, c);
-                            if(testVal == -1)
-                                testsOk = 0;
-                        }
-                }
-            }
-        }
+    // test 4: check that the card is in the played pile
+	printf("TEST 4: Player has council_room card in playedCard pile\n");
+    for (i = 0; i < testG.playedCardCount; i++)
+    {
+        if (testG.playedCards[i] == testCard) { playedTestCardCount++; };
     }
-    if(testsOk)
-        printf("ALL TESTS OK\n");
-    return 0;
+    if (playedTestCardCount == 1) { printf("Test Passed: "); }
+    else { printf("Test Failed: "); }
+	printf("played count = %d, expected = %d\n", playedTestCardCount, 1);
+
+    // test 5: current player has more buys
+	printf("TEST 5: Player has 1 more buy\n");
+    if (testG.numBuys == G.numBuys + 1) { printf("Test Passed: "); }
+    else { printf("Test Failed: "); }
+	printf("numActions count = %d, expected = %d\n", testG.numBuys, G.numBuys + 1);
+
+	printf("TEST 6: Test that other players draw 1 card, discard unaffected\n");
+    // ensure hand, deck, discard counts remain the same for all other players
+    for (i = 1; i < numPlayers; i++)
+    {
+        if (testG.deckCount[i] == G.deckCount[i] - 1) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("deck count = %d, expected = %d\n", testG.deckCount[i], G.deckCount[i] - 1);
+        
+        if (testG.handCount[i] == G.handCount[i] + 1) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("hand count = %d, expected = %d\n", testG.handCount[i], G.handCount[i] + 1);
+        
+        if (testG.discardCount[i] == G.discardCount[i]) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("discard count = %d, expected = %d\n", testG.discardCount[i], G.discardCount[i]);
+    }
+
+    printf("TEST 7: No changes to Kingdom Supply Card Piles\n");
+    int numKingdomCards = sizeof(k)/sizeof(k[0]);
+    for (i = 0; i < numKingdomCards; i++)
+    {
+        if (supplyCount(k[i], &testG) == supplyCount(k[i], &G)) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("kingdom count = %d, expected = %d\n", supplyCount(k[i], &testG), supplyCount(k[i], &G));
+    }
+
+    printf("TEST 8: No Changes to Victory Supply Card Piles\n");
+    int v[3] = {estate, duchy, province};
+    for (i = 0; i < 3; i++)
+    {
+        if (supplyCount(v[i], &testG) == supplyCount(v[i], &G)) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("victory count = %d, expected = %d\n", supplyCount(v[i], &testG), supplyCount(v[i], &G));
+    }
+
+    printf("TEST 9: No Changes to Treasure Supply Card Piles\n");
+    int t[3] = {copper, silver, gold};
+    for (i = 0; i < 3; i++)
+    {
+        if (supplyCount(t[i], &testG) == supplyCount(t[i], &G)) { printf("Test Passed: "); }
+        else { printf("Test Failed: "); }
+        printf("treasure count = %d, expected = %d\n", supplyCount(t[i], &testG), supplyCount(t[i], &G));
+    }
+
+	printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);
+
+	return 0;
 }
+
+
