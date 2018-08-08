@@ -30,7 +30,7 @@ randomtests: randomtestadventurer.c randomtestcard1.c randomtestcard2.c
 	echo ""
 	echo "randomtestcard1.c:" >> randomtests.out
 	gcc -o randomtestcard1 -g  randomtestcard1.c dominion.o interface.o rngs.o $(CFLAGS)
-	./randomtestadventurer >> randomtests.out
+	./randomtestcard1 >> randomtests.out
 	gcov dominion.c >> randomtests.out
 	echo ""
 	echo "randomtestcard2.c:" >> randomtests.out
